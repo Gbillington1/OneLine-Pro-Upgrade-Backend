@@ -4,7 +4,6 @@ const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
 const { resolve } = require("path");
-// This is your real test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 
 // enable CORS
