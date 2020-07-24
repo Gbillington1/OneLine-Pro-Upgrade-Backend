@@ -8,7 +8,9 @@ const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 
 // enable CORS
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:3000'
+}))
 
 console.log(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_USER_PASS, process.env.MYSQL_DB_NAME)
 
