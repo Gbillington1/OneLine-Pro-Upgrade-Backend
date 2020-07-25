@@ -13,7 +13,7 @@ app.use(cors({
 // form connection object
 var connection = mysql.createConnection(process.env.DATABASE_URL);
 
-// connect to the database/
+// connect to the database
 connection.connect(function(err) {
   if (err) throw err;
   console.log("You are connected to the database");
