@@ -10,12 +10,10 @@ app.use(cors({
   origin: 'http://localhost:3000'
 }))
 
-console.log(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_USER_PASS, process.env.MYSQL_DB_NAME)
-
 // form connection object
 var connection = mysql.createConnection(process.env.DATABASE_URL);
 
-// connect to the database
+// connect to the database/
 connection.connect(function(err) {
   if (err) throw err;
   console.log("You are connected to the database");
