@@ -13,18 +13,18 @@ app.use(cors({
 console.log(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_USER_PASS, process.env.MYSQL_DB_NAME)
 
 // form connection object
-var connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_USER_PASS,
-  database: process.env.MYSQL_DB_NAME
-});
+// var connection = mysql.createConnection({
+//   host: process.env.MYSQL_HOST,
+//   user: process.env.MYSQL_USER,
+//   password: process.env.MYSQL_USER_PASS,
+//   database: process.env.MYSQL_DB_NAME
+// });
 
 // connect to the database
-connection.connect(function(err) {
-  if (err) throw err;
-  console.log("You are connected to the database");
-})
+// connection.connect(function(err) {
+//   if (err) throw err;
+//   console.log("You are connected to the database");
+// })
 
 // recieve get request and return session id of the transaction 
 app.get('/id', async (req, res) => {
