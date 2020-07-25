@@ -40,4 +40,4 @@ app.get('/id', async (req, res) => {
   res.json({ session_id: session.id });
 });
 
-app.listen(4242, () => console.log('Node server listening on oneline-backend.herokuapp.com'));
+app.listen(process.env.PORT, () => console.log('Node server listening on oneline-backend.herokuapp.com'));
