@@ -31,7 +31,7 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
   switch (webhook.type) {
     case "checkout.session.completed":
-      console.log(webhook.data)
+      console.log(webhook.data.total_details)
       res.status(200).send('Webhook recieved successfully');
   }
 
