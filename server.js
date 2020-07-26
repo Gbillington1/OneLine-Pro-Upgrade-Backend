@@ -19,6 +19,10 @@ connection.connect(function(err) {
   console.log("You are connected to the database");
 })
 
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + 'test.html'));
+})
+
 // recieve get request and return session id of the transaction 
 app.get('/id', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
