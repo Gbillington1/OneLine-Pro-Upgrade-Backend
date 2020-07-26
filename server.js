@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
@@ -19,8 +20,8 @@ connection.connect(function(err) {
   console.log("You are connected to the database");
 })
 
-app.post('/payment-completed', function(req, res) {
-  console.log(res)
+app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
+  console.log(JSON.parse(req.body));
 })
 
 // recieve get request and return session id of the transaction 
