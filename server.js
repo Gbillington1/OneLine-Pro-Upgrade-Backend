@@ -19,8 +19,8 @@ connection.connect(function(err) {
   console.log("You are connected to the database");
 })
 
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + 'test.html'));
+app.get('/payment-completed', function(req, res) {
+  console.log(res)
 })
 
 // recieve get request and return session id of the transaction 
