@@ -19,7 +19,7 @@ connection.connect(function(err) {
   console.log("You are connected to the database");
 })
 
-app.get('/payment-completed', function(req, res) {
+app.post('/payment-completed', function(req, res) {
   console.log(res)
 })
 
