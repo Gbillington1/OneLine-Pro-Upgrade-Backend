@@ -21,6 +21,20 @@ connection.connect(function(err) {
 })
 
 app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
+  var webhook;
+
+  try {
+    webhook = JSON.parse(req.body);
+  } catch (err) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  switch (webhook.type) {
+    case "checkout.session.completed":
+      console.log(webhook.data)
+      res.status(200).send('Webhook recieved successfully');
+  }
+
   console.log(JSON.parse(req.body));
 })
 
