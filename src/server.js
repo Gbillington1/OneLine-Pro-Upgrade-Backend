@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -8,9 +9,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 const Payment = require("../models/payment");
 
 // enable CORS
-app.use(cors({
-  origin: 'http://localhost:3000'
-}))
+app.use(cors())
 
 // form connection object
 var connection = mysql.createConnection(process.env.DATABASE_URL);
@@ -32,19 +31,20 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
   switch (webhook.type) {
     case "checkout.session.completed":
-      res.status(200).send('Webhook recieved successfully');
+      break;
 
     case "customer.created":
-      res.status(200).send('Webhook reciveved successfullly');
+      break;
 
     case "payment_intent.succeeded":
       var data = webhook.data.object;
-      var currentPayment = new Payment(data.id, data.amount, data.currency, application_fee_amount, unixToDatetime(data.created), data.customer);
-      console.log(currentPayment, currentPayment.test())
-      res.status(200).send('Webhook reciveved successfullly');
-  }
+      console.log(data)
+      var currentPayment = new Payment(data.id, data.amount, data.currency, data.application_fee_amount, data.created, data.customer);
+      console.log(currentPayment, currentPayment.test());
+      break;
 
-  console.log(JSON.parse(req.body));
+  }
+  res.status(200).send('Webhook recieved successfully');
 })
 
 // recieve get request and return session id of the transaction 
@@ -68,4 +68,4 @@ app.get('/id', async (req, res) => {
   res.json({ session_id: session.id });
 });
 
-app.listen(process.env.PORT, () => console.log('Node server listening on oneline-backend.herokuapp.com'));
+app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
