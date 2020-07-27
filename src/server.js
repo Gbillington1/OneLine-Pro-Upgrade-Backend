@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
+const Payment = require("../models/payment");
 
 // enable CORS
 app.use(cors({
@@ -31,15 +32,15 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
   switch (webhook.type) {
     case "checkout.session.completed":
-      console.log(webhook)
       res.status(200).send('Webhook recieved successfully');
 
     case "customer.created":
-      console.log(webhook);
       res.status(200).send('Webhook reciveved successfullly');
 
     case "payment_intent.succeeded":
-      console.log(webhook);
+      var data = webhook.data.object;
+      var currentPayment = new Payment(data.id, data.amount, data.currency, application_fee_amount, unixToDatetime(data.created), data.customer);
+      console.log(currentPayment, currentPayment.test())
       res.status(200).send('Webhook reciveved successfullly');
   }
 
