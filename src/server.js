@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const moment = require("moment");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
@@ -12,10 +13,10 @@ const Payment = require("../models/payment");
 app.use(cors())
 
 // form connection object
-var connection = mysql.createConnection(process.env.DATABASE_URL);
+var conn = mysql.createConnection(process.env.DATABASE_URL);
 
 // connect to the database
-connection.connect(function(err) {
+conn.connect(function(err) {
   if (err) throw err;
   console.log("You are connected to the database");
 })
@@ -38,9 +39,13 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
     case "payment_intent.succeeded":
       var data = webhook.data.object;
-      console.log(data)
-      var currentPayment = new Payment(data.id, data.amount, data.currency, data.application_fee_amount, data.created, data.customer);
-      console.log(currentPayment, currentPayment.test());
+      var timestamp = moment.unix(data.created).format("YYYY-MM-DD hh:mm:ss");
+      var currentPayment = new Payment(data.id, data.amount, data.currency, timestamp, data.customer);
+      console.log(currentPayment);
+      currentPayment.insert(conn);
+      break;
+
+    default:
       break;
 
   }

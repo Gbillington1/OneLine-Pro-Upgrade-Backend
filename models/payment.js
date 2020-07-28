@@ -1,15 +1,22 @@
 class Payment {
-    constructor(payment_id, payment_amount, payment_currency, stripe_fee, payment_timestamp, customer_id) {
+    constructor(payment_id, payment_amount, payment_currency, payment_timestamp, customer_id) {
         this.paymentId = payment_id;
-        this.paymen_amount = payment_amount;
-        this.currency = payment_currency;
-        this.fee = stripe_fee;
+        this.payment_amount = payment_amount;
+        this.payment_currency = payment_currency;
         this.payment_timestamp = payment_timestamp;
         this.customerId = customer_id;
     }
 
-    test() {
-        console.log("The test worked!")
+    insert(conn) {
+        console.log(this.paymentId)
+        return new Promise(function(resolve, reject) {
+            conn.query("INSERT INTO payments (payment_id, payment_amount, payment_currency, payment_timestamp, customer_id VALUES ('"+this.paymentId+"', '"+this.payment_amount+"', '"+this.payment_currency+"', '"+this.payment_timestamp+"', '"+this.customerId+"')").then(() => {
+                resolve();
+            }).catch(err => {
+                console.error(err);
+                reject(err);
+            });
+        })
     }
 }
 
