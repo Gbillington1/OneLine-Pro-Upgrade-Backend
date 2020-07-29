@@ -9,6 +9,8 @@ const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 const Payment = require("../models/payment");
 
+var paymentIntent;
+
 // enable CORS
 app.use(cors())
 
@@ -38,18 +40,18 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
       break;
 
     case "payment_intent.succeeded":
+
       var data = webhook.data.object;
       var timestamp = moment.unix(data.created).format("YYYY-MM-DD hh:mm:ss");
-      var currentPayment = new Payment(data.id, data.amount, data.currency, timestamp, data.customer);
-      console.log(currentPayment);
-      currentPayment.insert(conn);
+      paymentIntent = new Payment(data.id, data.amount, data.currency, timestamp, data.customer);
+      paymentIntent.insert(conn).catch(err => console.error(err));
       break;
 
     default:
       break;
 
   }
-  res.status(200).send('Webhook recieved successfully');
+  res.status(200).send(paymentIntent);
 })
 
 // recieve get request and return session id of the transaction 
