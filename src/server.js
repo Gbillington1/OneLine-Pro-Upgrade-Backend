@@ -7,7 +7,7 @@ const moment = require("moment");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
-const Payment = require("../models/payment");
+const Payment = require("../models/payment.js");
 
 var paymentIntent;
 
