@@ -5,9 +5,9 @@
   "repository": {
     "url": "https://github.com/Gbillington1/OneLine-Pro-Upgrade-Backend"
   },
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node server.js"
   },
   "author": "Graham Billington",
   "license": "ISC",

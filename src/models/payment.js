@@ -10,10 +10,11 @@ class Payment {
     insert(conn) {
         let payment = this;
         return new Promise(function (resolve, reject) {
-            conn.query("INSERT INTO payments (payment_id, payment_amount, payment_currency, payment_timestamp, customer_id) VALUES ('" + payment.paymentId + "', '" + payment.payment_amount + "', '" + payment.payment_currency + "', '" + payment.payment_timestamp + "', '" + payment.customerId + "')", function(err, result, fields) {
+            conn.query("INSERT INTO payments (payment_id, payment_amount, payment_currency, payment_timestamp, customer_id) VALUES (?, ?, ?, ?, ?)", [payment.paymentId, payment.payment_amount, payment.payment_currency, payment.payment_timestamp, payment.customerId], function(err, result, fields) {
                 if (err) {
                     reject(err);
                 } else {
+                    console.log('resolved')
                     resolve();
                 }
             });

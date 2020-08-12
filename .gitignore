@@ -1,5 +1,8 @@
 # api key
-.env
+src/.env
 
 # node moduels
-node_modules/**
+src/node_modules/**
+
+# db data
+mariadb-data/**

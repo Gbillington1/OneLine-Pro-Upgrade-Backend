@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log(process.env)
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -7,15 +8,26 @@ const moment = require("moment");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
-const Payment = require("../models/payment.js");
+const Payment = require("./models/payment.js");
 
 var paymentIntent;
 
 // enable CORS
 app.use(cors())
 
-// form connection object
-var conn = mysql.createConnection(process.env.DATABASE_URL);
+// schema migrations for schema creation
+// flyway
+
+// local db
+// var conn = mysql.createConnection({
+//   host: 'mariadb',
+//   user: 'user',
+//   password: 'test',
+//   database: 'oneline-db'
+// });
+
+// live db
+var conn = mysql.createConnection({process.env.DATABASE_URL);
 
 // connect to the database
 conn.connect(function(err) {
@@ -33,10 +45,14 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
   }
 
   switch (webhook.type) {
+
     case "checkout.session.completed":
+      console.log(webhook);
       break;
 
     case "customer.created":
+      var data = webhook;
+      console.log(data)
       break;
 
     case "payment_intent.succeeded":
@@ -45,6 +61,7 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
       var timestamp = moment.unix(data.created).format("YYYY-MM-DD hh:mm:ss");
       paymentIntent = new Payment(data.id, data.amount, data.currency, timestamp, data.customer);
       paymentIntent.insert(conn).catch(err => console.error(err));
+
       break;
 
     default:
@@ -75,4 +92,4 @@ app.get('/id', async (req, res) => {
   res.json({ session_id: session.id });
 });
 
-app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
+app.listen(4242, () => console.log('Node server listening on port ' + 4242));
