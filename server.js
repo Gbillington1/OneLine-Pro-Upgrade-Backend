@@ -56,7 +56,7 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
       break;
 
     case "payment_intent.succeeded":
-
+      console.log(webhook);
       var data = webhook.data.object;
       var timestamp = moment.unix(data.created).format("YYYY-MM-DD hh:mm:ss");
       paymentIntent = new Payment(data.id, data.amount, data.currency, timestamp, data.customer);
