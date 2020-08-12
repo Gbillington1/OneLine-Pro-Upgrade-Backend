@@ -92,4 +92,8 @@ app.get('/id', async (req, res) => {
   res.json({ session_id: session.id });
 });
 
-app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+// local
+// app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+
+// live
+app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
