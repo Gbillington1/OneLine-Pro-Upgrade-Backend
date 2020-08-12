@@ -5,7 +5,7 @@ WORKDIR /home/node/src/oneline-backend
 
 RUN mkdir chown -p /home/node/src/oneline-backend/node_modules && chown -R node:node /home/node/src/oneline-backend
 
-COPY src/package*.json ./
+COPY package*.json ./
 
 RUN npm install
 
@@ -13,6 +13,6 @@ USER node
 
 EXPOSE 4242
 
-COPY --chown=node:node ./src .
+COPY --chown=node:node ./ .
 
 CMD [ "node", "server.js" ]

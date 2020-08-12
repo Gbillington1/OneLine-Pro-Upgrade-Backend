@@ -7,7 +7,7 @@ services:
     ports:
       - 4242:4242
     volumes:
-      - ./src:/home/node/src/oneline-backend
+      - ./:/home/node/src/oneline-backend
     environment:
       - EXPOSED_PORT=4242
     external_links:
