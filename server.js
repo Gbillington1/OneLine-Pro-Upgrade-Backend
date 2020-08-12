@@ -27,7 +27,7 @@ app.use(cors())
 // });
 
 // live db
-var conn = mysql.createConnection({process.env.DATABASE_URL);
+var conn = mysql.createConnection(process.env.DATABASE_URL);
 
 // connect to the database
 conn.connect(function(err) {
