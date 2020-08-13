@@ -47,33 +47,29 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
   switch (webhook.type) {
 
-    // case "checkout.session.completed":
-    //   let sessionData = webhook.data.object;
-    //
-    //   let session = new Session(sessionData.id, sessionData.customer, sessionData.payment_intent);
-    //   session.insert(conn).catch(err => console.error(err));
-    //
-    //   break;
-    //
-    // case "customer.created":
-    //   let customerData = webhook;
-    //   let customerTimestamp = moment.unix(customerData.created).format("YYYY-MM-DD hh:mm:ss");
-    //
-    //
-    //   break;
-    //
-    // case "payment_intent.succeeded":
-    //   let paymentData = webhook.data.object;
-    //   let PaymentTimestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
-    //
-    //   paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, PaymentTimestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
-    //
-    //   paymentIntent.insert(conn).catch(err => console.error(err));
-    //
-    //   break;
+    case "checkout.session.completed":
+      let sessionData = webhook.data.object;
 
-    case "issuing_cardholder.created":
-      console.log(webhook);
+      let session = new Session(sessionData.id, sessionData.customer, sessionData.payment_intent);
+      session.insert(conn).catch(err => console.error(err));
+
+      break;
+
+    case "customer.created":
+      let customerData = webhook;
+      let customerTimestamp = moment.unix(customerData.created).format("YYYY-MM-DD hh:mm:ss");
+
+
+      break;
+
+    case "payment_intent.succeeded":
+      let paymentData = webhook.data.object;
+      let PaymentTimestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
+
+      paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, PaymentTimestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
+
+      paymentIntent.insert(conn).catch(err => console.error(err));
+
       break;
 
     default:
