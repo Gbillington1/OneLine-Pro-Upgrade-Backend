@@ -8,7 +8,8 @@ const moment = require("moment");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
-const Payment = require("./models/payment.js");
+const Payment = require("./models/payment");
+const Session = require("./models/session");
 
 let paymentIntent;
 
@@ -47,7 +48,11 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
   switch (webhook.type) {
 
     case "checkout.session.completed":
-      console.log(webhook);
+      let sessionData = webhook.data.object;
+
+      let session = new Session(sessionData.id, sessionData.customer, sessionData.payment_intent);
+      session.insert(conn).catch(err => console.error(err));
+
       break;
 
     case "customer.created":
@@ -56,12 +61,12 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
       break;
 
     case "payment_intent.succeeded":
-      console.log(webhook);
       let paymentData = webhook.data.object;
       let timestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
+
       paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, timestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
+
       paymentIntent.insert(conn).catch(err => console.error(err));
-      console.log(paymentIntent);
 
       break;
 
