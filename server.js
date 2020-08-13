@@ -1,4 +1,4 @@
-// require('dotenv').config();
+require('dotenv').config();
 console.log(process.env)
 const express = require("express");
 const app = express();
@@ -10,7 +10,7 @@ const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 const Payment = require("./models/payment.js");
 
-var paymentIntent;
+let paymentIntent;
 
 // enable CORS
 app.use(cors())
@@ -19,15 +19,15 @@ app.use(cors())
 // flyway
 
 // local db
-// var conn = mysql.createConnection({
-//   host: 'mariadb',
-//   user: 'user',
-//   password: 'test',
-//   database: 'oneline-db'
-// });
+let conn = mysql.createConnection({
+  host: 'mariadb',
+  user: 'user',
+  password: 'test',
+  database: 'oneline-db'
+});
 
 // live db
-var conn = mysql.createConnection(process.env.DATABASE_URL);
+// let conn = mysql.createConnection(process.env.DATABASE_URL);
 
 // connect to the database
 conn.connect(function(err) {
@@ -36,7 +36,7 @@ conn.connect(function(err) {
 })
 
 app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
-  var webhook;
+  let webhook;
 
   try {
     webhook = JSON.parse(req.body);
@@ -51,16 +51,17 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
       break;
 
     case "customer.created":
-      var data = webhook;
-      console.log(data)
+      let customerData = webhook;
+      console.log(customerData)
       break;
 
     case "payment_intent.succeeded":
       console.log(webhook);
-      var data = webhook.data.object;
-      var timestamp = moment.unix(data.created).format("YYYY-MM-DD hh:mm:ss");
-      paymentIntent = new Payment(data.id, data.amount, data.currency, timestamp, data.customer);
+      let paymentData = webhook.data.object;
+      let timestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
+      paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, timestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
       paymentIntent.insert(conn).catch(err => console.error(err));
+      console.log(paymentIntent);
 
       break;
 
@@ -93,7 +94,7 @@ app.get('/id', async (req, res) => {
 });
 
 // local
-// app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+app.listen(4242, () => console.log('Node server listening on port ' + 4242));
 
 // live
-app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
+// app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
