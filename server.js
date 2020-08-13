@@ -19,16 +19,16 @@ app.use(cors())
 // schema migrations for schema creation
 // flyway
 
-// local db
-// let conn = mysql.createConnection({
-//   host: 'mariadb',
-//   user: 'user',
-//   password: 'test',
-//   database: 'oneline-db'
-// });
+local db
+let conn = mysql.createConnection({
+  host: 'mariadb',
+  user: 'user',
+  password: 'test',
+  database: 'oneline-db'
+});
 
 // live db
-let conn = mysql.createConnection(process.env.DATABASE_URL);
+// let conn = mysql.createConnection(process.env.DATABASE_URL);
 
 // connect to the database
 conn.connect(function(err) {
@@ -101,7 +101,7 @@ app.get('/id', async (req, res) => {
 });
 
 // local
-// app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+app.listen(4242, () => console.log('Node server listening on port ' + 4242));
 
 // live
-app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
+// app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
