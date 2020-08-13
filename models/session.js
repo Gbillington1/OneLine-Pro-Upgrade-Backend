@@ -9,7 +9,7 @@ class Session {
     insert(conn) {
         let session = this;
         return new Promise(function(resolve, reject) {
-            conn.query('INSERT INTO sessions (session_id, customer_id, payment_id) VALUES (?, ?, ?)', [session.session_id, session.customer_id, session.payment_id], function(err, fields, result) {
+            conn.query('INSERT INTO sessions (session_id, customer_id, payment_id) VALUES (?, ?, ?)', [session.session_id, session.customer_id, session.payment_id], function(err, result, fields) {
                 if (err) {
                     reject(err);
                 } else {

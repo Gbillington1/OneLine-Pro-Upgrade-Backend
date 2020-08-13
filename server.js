@@ -57,14 +57,16 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
     case "customer.created":
       let customerData = webhook;
-      console.log(customerData)
+      let customerTimestamp = moment.unix(customerData.created).format("YYYY-MM-DD hh:mm:ss");
+
+      
       break;
 
     case "payment_intent.succeeded":
       let paymentData = webhook.data.object;
-      let timestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
+      let PaymentTimestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
 
-      paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, timestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
+      paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, PaymentTimestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
 
       paymentIntent.insert(conn).catch(err => console.error(err));
 
