@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 console.log(process.env)
 const express = require("express");
 const app = express();
@@ -20,15 +20,15 @@ app.use(cors())
 // flyway
 
 // local db
-let conn = mysql.createConnection({
-  host: 'mariadb',
-  user: 'user',
-  password: 'test',
-  database: 'oneline-db'
-});
+// let conn = mysql.createConnection({
+//   host: 'mariadb',
+//   user: 'user',
+//   password: 'test',
+//   database: 'oneline-db'
+// });
 
 // live db
-// let conn = mysql.createConnection(process.env.DATABASE_URL);
+let conn = mysql.createConnection(process.env.DATABASE_URL);
 
 // connect to the database
 conn.connect(function(err) {
@@ -47,30 +47,33 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
 
   switch (webhook.type) {
 
-    case "checkout.session.completed":
-      let sessionData = webhook.data.object;
+    // case "checkout.session.completed":
+    //   let sessionData = webhook.data.object;
+    //
+    //   let session = new Session(sessionData.id, sessionData.customer, sessionData.payment_intent);
+    //   session.insert(conn).catch(err => console.error(err));
+    //
+    //   break;
+    //
+    // case "customer.created":
+    //   let customerData = webhook;
+    //   let customerTimestamp = moment.unix(customerData.created).format("YYYY-MM-DD hh:mm:ss");
+    //
+    //
+    //   break;
+    //
+    // case "payment_intent.succeeded":
+    //   let paymentData = webhook.data.object;
+    //   let PaymentTimestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
+    //
+    //   paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, PaymentTimestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
+    //
+    //   paymentIntent.insert(conn).catch(err => console.error(err));
+    //
+    //   break;
 
-      let session = new Session(sessionData.id, sessionData.customer, sessionData.payment_intent);
-      session.insert(conn).catch(err => console.error(err));
-
-      break;
-
-    case "customer.created":
-      let customerData = webhook;
-      let customerTimestamp = moment.unix(customerData.created).format("YYYY-MM-DD hh:mm:ss");
-
-      
-      break;
-
-    case "payment_intent.succeeded":
-      let paymentData = webhook.data.object;
-      let PaymentTimestamp = moment.unix(paymentData.created).format("YYYY-MM-DD hh:mm:ss");
-
-      paymentIntent = new Payment(paymentData.id, paymentData.amount, paymentData.currency, PaymentTimestamp, paymentData.payment_method, paymentData.status, paymentData.customer);
-
-      paymentIntent.insert(conn).catch(err => console.error(err));
-
-      break;
+    case "issuing_cardholder.created":
+      console.log(webhook)
 
     default:
       break;
@@ -101,7 +104,7 @@ app.get('/id', async (req, res) => {
 });
 
 // local
-app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+// app.listen(4242, () => console.log('Node server listening on port ' + 4242));
 
 // live
-// app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
+app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));
