@@ -73,7 +73,8 @@ app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), funct
     //   break;
 
     case "issuing_cardholder.created":
-      console.log(webhook)
+      console.log(webhook);
+      break;
 
     default:
       break;
