@@ -19,7 +19,7 @@ app.use(cors())
 // schema migrations for schema creation
 // flyway
 
-local db
+//local db
 let conn = mysql.createConnection({
   host: 'mariadb',
   user: 'user',
