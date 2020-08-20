@@ -1,5 +1,4 @@
-// require('dotenv').config();
-console.log(process.env)
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -9,7 +8,6 @@ const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 const Payment = require("./models/payment");
-const Session = require("./models/session");
 
 let paymentIntent;
 
@@ -36,6 +34,14 @@ conn.connect(function(err) {
   console.log("You are connected to the database");
 })
 
+// user sign up (before payment)
+app.post('/api/signup', (req, res) => {
+  // let signUpData = req;
+  console.log(req);
+  res.status(200).send('Post req received');
+})
+
+// webhook endpoint for payment
 app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
   let webhook;
 
