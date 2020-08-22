@@ -7,6 +7,8 @@ const moment = require("moment");
 const mysql = require("mysql");
 const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 const Payment = require("./models/payment");
 
 let paymentIntent;
@@ -39,8 +41,13 @@ conn.connect(function(err) {
 
 // user sign up (before payment)
 app.post('/api/signup', (req, res) => {
-  // let signUpData = req;
-  console.log(req);
+  let unhashedPass = req.body.password;
+
+  bcrypt.hash(unhashedPass, saltRounds, (err, hash) => {
+    if (err) console.error(err);
+    console.log(hash)
+  })
+
   res.status(200).send('Post req received');
 })
 
