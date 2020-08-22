@@ -14,10 +14,13 @@ let paymentIntent;
 // enable CORS
 app.use(cors())
 
+// this middle ware is NEEDED if you want to recieve data from requests
+app.use(bodyParser());
+
 // schema migrations for schema creation
 // flyway
 
-//local db
+//local 
 let conn = mysql.createConnection({
   host: 'mariadb',
   user: 'user',
