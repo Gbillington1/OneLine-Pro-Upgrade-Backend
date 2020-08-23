@@ -9,7 +9,10 @@ const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
+const { v4: uuidv4 } = require('uuid');
 const Payment = require("./models/payment");
+const Password = require("./models/userPassword");
+const User = require('./models/user');
 
 let paymentIntent;
 
@@ -45,7 +48,28 @@ app.post('/api/signup', (req, res) => {
 
   bcrypt.hash(unhashedPass, saltRounds, (err, hash) => {
     if (err) console.error(err);
-    console.log(hash)
+
+    let userPasswordData = {
+      'passwordId':uuidv4(),
+      'password': hash,
+      'createdAt': moment().format("YYYY-MM-DD hh:mm:ss")
+    }
+
+    let userPassword = new Password(userPasswordData.passwordId, userPasswordData.password, userPasswordData.createdAt);
+
+    userPassword.insert(conn).catch(err => console.error(err));
+
+    let userData = {
+      'userId': uuidv4(),
+      'userEmail' : req.body.email,
+      'userCreatedAt': moment().format("YYYY-MM-DD hh:mm:ss"),
+      'userPasswordId': userPasswordData.passwordId
+    }
+
+    let user = new User(userData.userId, userData.userEmail, userData.userCreatedAt, userData.userPasswordId);
+
+    user.insert(conn).catch(err => console.error(err));
+
   })
 
   res.status(200).send('Post req received');
