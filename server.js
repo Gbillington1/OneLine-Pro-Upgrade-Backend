@@ -2,10 +2,9 @@ require('dotenv').config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); 
 const moment = require("moment");
 const mysql = require("mysql");
-const { resolve } = require("path");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
@@ -22,8 +21,7 @@ app.use(cors())
 // this middle ware is NEEDED if you want to recieve data from requests
 app.use(bodyParser());
 
-// schema migrations for schema creation
-// flyway
+app.use()
 
 //local 
 let conn = mysql.createConnection({
@@ -73,6 +71,11 @@ app.post('/api/signup', (req, res) => {
   })
 
   res.status(200).send('Post req received');
+})
+
+// endpoint for logging in to a OneLine account
+app.post('api/login', (res, req) => {
+
 })
 
 // webhook endpoint for payment
