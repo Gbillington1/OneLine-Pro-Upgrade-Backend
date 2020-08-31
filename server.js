@@ -18,10 +18,34 @@ let paymentIntent;
 // enable CORS
 app.use(cors())
 
-// this middle ware is NEEDED if you want to recieve data from requests
-app.use(bodyParser());
+// parses incoming request URLs
+app.use(bodyParser.urlencoded());
 
-app.use()
+// parses incoming JSON objects
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+
+  if (req.originalUrl == "/api/signup") {
+
+  let data = req.body;
+
+  let regexToValidateEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (regexToValidateEmail.test(String(data.email).toLowerCase())) {
+    console.log("valid email");
+  } else {
+    next('Invalid Email');
+  }
+
+  if (data.password.length > 6) {
+    console.log("valid password");
+  } else {
+    next('Invalid Password');
+  }
+
+  }
+
+});
 
 //local 
 let conn = mysql.createConnection({
@@ -42,6 +66,7 @@ conn.connect(function(err) {
 
 // user sign up (before payment)
 app.post('/api/signup', (req, res) => {
+  console.log("here");
   let unhashedPass = req.body.password;
 
   bcrypt.hash(unhashedPass, saltRounds, (err, hash) => {
@@ -141,6 +166,11 @@ app.get('/id', async (req, res) => {
     cancel_url: 'http://localhost:3000/upgrade',
   });
   res.json({ session_id: session.id });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(400).send("that ain't right");
 });
 
 // local

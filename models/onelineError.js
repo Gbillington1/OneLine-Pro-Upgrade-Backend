@@ -1,7 +1,12 @@
-class OneLineError extends Error {
+let errMessage;
+let httpCode;
 
-    constructor() {
+class apiError extends Error {
+
+    constructor(errCode, msg) {
         super();
+        this.name = "OneLineError";
+        // this.errCode
     }
 
 }
