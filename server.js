@@ -12,6 +12,7 @@ const { v4: uuidv4 } = require('uuid');
 const Payment = require("./models/payment");
 const Password = require("./models/userPassword");
 const User = require('./models/user');
+const onelineError = require("./models/onelineError");
 
 let paymentIntent;
 
@@ -26,22 +27,22 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
 
-  if (req.originalUrl == "/api/signup") {
+  if (req.originalUrl === "/api/v1/signup") {
 
-  let data = req.body;
+    let data = req.body;
 
-  let regexToValidateEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (regexToValidateEmail.test(String(data.email).toLowerCase())) {
-    console.log("valid email");
-  } else {
-    next('Invalid Email');
-  }
+    let regexToValidateEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  if (data.password.length > 6) {
-    console.log("valid password");
-  } else {
-    next('Invalid Password');
-  }
+    if (regexToValidateEmail.test(String(data.email).toLowerCase()) || data.password.length > 6) {
+
+      //valid email and password
+
+    } else {
+
+      // TODO: Figure out how to personalize this 701 error to return invalid pass, email, or both
+      // next(new onelineError(701).output());
+
+    }
 
   }
 
@@ -65,7 +66,7 @@ conn.connect(function(err) {
 })
 
 // user sign up (before payment)
-app.post('/api/signup', (req, res) => {
+app.post('/api/v1/signup', (req, res) => {
   console.log("here");
   let unhashedPass = req.body.password;
 
@@ -99,12 +100,12 @@ app.post('/api/signup', (req, res) => {
 })
 
 // endpoint for logging in to a OneLine account
-app.post('api/login', (res, req) => {
+app.post('api/v1/login', (res, req) => {
 
 })
 
 // webhook endpoint for payment
-app.post('/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
+app.post('/api/v1/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
   let webhook;
 
   try {
@@ -168,6 +169,7 @@ app.get('/id', async (req, res) => {
   res.json({ session_id: session.id });
 });
 
+// error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(400).send("that ain't right");
