@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const bodyParser = require("body-parser"); 
+const bodyParser = require("body-parser");
 const moment = require("moment");
 const mysql = require("mysql");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
@@ -12,7 +12,7 @@ const { v4: uuidv4 } = require('uuid');
 const Payment = require("./models/payment");
 const Password = require("./models/userPassword");
 const User = require('./models/user');
-const onelineError = require("./models/onelineError");
+const onelineApiError = require("./models/onelineApiError");
 
 let paymentIntent;
 
@@ -25,25 +25,24 @@ app.use(bodyParser.urlencoded());
 // parses incoming JSON objects
 app.use(bodyParser.json());
 
+// data validation
 app.use((req, res, next) => {
 
+  // from signup route
   if (req.originalUrl === "/api/v1/signup") {
 
     let data = req.body;
 
     let regexToValidateEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    if (regexToValidateEmail.test(String(data.email).toLowerCase()) || data.password.length > 6) {
+    let emailValid = regexToValidateEmail.test(String(data.email).toLowerCase());
+    let passwordValid = data.password.length > 6;
 
-      //valid email and password
+    if (!emailValid || !passwordValid) {
 
-    } else {
-
-      // TODO: Figure out how to personalize this 701 error to return invalid pass, email, or both
-      // next(new onelineError(701).output());
+      next(new onelineApiError(701).output());
 
     }
-
   }
 
 });
@@ -60,7 +59,7 @@ let conn = mysql.createConnection({
 // let conn = mysql.createConnection(process.env.DATABASE_URL);
 
 // connect to the database
-conn.connect(function(err) {
+conn.connect(function (err) {
   if (err) throw err;
   console.log("You are connected to the database");
 })
@@ -74,7 +73,7 @@ app.post('/api/v1/signup', (req, res) => {
     if (err) console.error(err);
 
     let userPasswordData = {
-      'passwordId':uuidv4(),
+      'passwordId': uuidv4(),
       'password': hash,
       'createdAt': moment().format("YYYY-MM-DD hh:mm:ss")
     }
@@ -85,7 +84,7 @@ app.post('/api/v1/signup', (req, res) => {
 
     let userData = {
       'userId': uuidv4(),
-      'userEmail' : req.body.email,
+      'userEmail': req.body.email,
       'userCreatedAt': moment().format("YYYY-MM-DD hh:mm:ss"),
       'userPasswordId': userPasswordData.passwordId
     }
@@ -105,7 +104,7 @@ app.post('api/v1/login', (res, req) => {
 })
 
 // webhook endpoint for payment
-app.post('/api/v1/payment-completed', bodyParser.raw({type: 'application/json'}), function(req, res) {
+app.post('/api/v1/payment-completed', bodyParser.raw({ type: 'application/json' }), function (req, res) {
   let webhook;
 
   try {
@@ -171,8 +170,15 @@ app.get('/id', async (req, res) => {
 
 // error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(400).send("that ain't right");
+
+  // handle api error
+  if (err.error.type == "onelineApiError") {
+    console.error(err);
+    res.status(err.error.status).send(err.error.message);
+  } else {
+    res.status(400).send("Something went wrong");
+  }
+
 });
 
 // local

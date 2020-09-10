@@ -1,7 +1,7 @@
 let errMessage;
 let httpCode;
 
-class onelineError extends Error {
+class onelineApiError extends Error {
 
     constructor(errCode) {
         switch (errCode) {
@@ -57,9 +57,9 @@ class onelineError extends Error {
         }
 
         super(errMessage);
-        this.name = "onelineError";
-        this.errCode = errCode;
-        this.httpCode = httpCode;
+        this.name = "onelineApiError";
+        this.code = errCode;
+        this.status = httpCode;
 
     }
 
@@ -69,12 +69,12 @@ class onelineError extends Error {
             "error": {
                 "type": this.name,
                 "message": this.message,
-                "errCode": this.errCode,
-                "httpCode": this.httpCode
+                "code": this.code,
+                "status": this.status
             }
         }
     }
 
 }
 
-module.exports = onelineError;
+module.exports = onelineApiError;
