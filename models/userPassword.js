@@ -1,16 +1,19 @@
+const pool = require('../models/db');
+
 class userPassword {
-    constructor(passId, passHash, timestamp) {
+    constructor(passId, passHash, createdAt, replacedAt) {
         this.passwordId = passId
         this.passwordHash = passHash;
-        this.passwordCreatedAt = timestamp;
+        this.passwordCreatedAt = createdAt;
+        this.passwordReplacedAt = replacedAt;
     }
 
-    insert(conn) {
+    insert() {
 
         let pass = this;
 
         return new Promise((resolve, reject) => {
-            conn.query('INSERT INTO user_passwords (password_id, password_hash, password_created_at) VALUES (?, ?, ?)', [pass.passwordId, pass.passwordHash, pass.passwordCreatedAt], (err, results, fields) => {
+            pool.query('INSERT INTO user_passwords (user_id, password_hash, created_at, replaced_at) VALUES (?, ?, ?, ?)', [pass.passwordId, pass.passwordHash, pass.passwordCreatedAt, pass.passwordReplacedAt], (err, results, fields) => {
                 if (err) {
                     reject(err);
                 } else {

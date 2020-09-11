@@ -1,3 +1,5 @@
+const pool = require('../models/db');
+
 class Payment {
     constructor(payment_id, payment_amount, payment_currency, payment_timestamp, payment_method_id, payment_status) {
         this.payment_id = payment_id;
@@ -8,10 +10,10 @@ class Payment {
         this.payment_status = payment_status
     }
 
-    insert(conn) {
+    insert() {
         let payment = this;
         return new Promise(function (resolve, reject) {
-            conn.query("INSERT INTO payments (payment_id, payment_amount, payment_currency, payment_timestamp, payment_method_id, payment_status) VALUES (?, ?, ?, ?, ?, ?)", [payment.payment_id, payment.payment_amount, payment.payment_currency, payment.payment_timestamp, payment.payment_method_id, payment.payment_status], function(err, result, fields) {
+            pool.query("INSERT INTO payments (payment_id, payment_amount, payment_currency, payment_timestamp, payment_method_id, payment_status) VALUES (?, ?, ?, ?, ?, ?)", [payment.payment_id, payment.payment_amount, payment.payment_currency, payment.payment_timestamp, payment.payment_method_id, payment.payment_status], function(err, result, fields) {
                 if (err) {
                     reject(err);
                 } else {

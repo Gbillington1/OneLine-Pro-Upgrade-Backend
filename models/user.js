@@ -1,17 +1,23 @@
+const pool = require('../models/db');
+
 class User {
-    constructor(id, email, createdAt, passwordId) {
+    constructor(id, firstName, lastName, email, createdAt, paymentId) {
         this.userId = id;
+        this.userFirstName = firstName;
+        this.userLastName = lastName;
         this.userEmail = email;
         this.userCreatedAt = createdAt;
-        this.userPasswordId = passwordId;
+        this.userPaymentId = paymentId;
     }
 
-    insert(conn) {
+    insert() {
 
         let user = this;
 
+        console.log(user);
+
         return new Promise((resolve, reject) => {
-            conn.query('INSERT INTO users (user_id, user_email, user_created_at, user_password_id) VALUES (?, ?, ?, ?)', [user.userId, user.userEmail, user.userCreatedAt, user.userPasswordId], (err, result, fields) => {
+            pool.query('INSERT INTO users (user_id, user_first_name, user_last_name, user_email, created_at, payment_id) VALUES (?, ?, ?, ?, ?, ?)', [user.userId, user.userFirstName, user.userLastName, user.userEmail, user.userCreatedAt, user.userPaymentId], (err, result, fields) => {
                 if (err) {
                     reject(err);
                 } else {
