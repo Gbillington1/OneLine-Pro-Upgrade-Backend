@@ -13,20 +13,7 @@ router.post('/', (req, res, next) => {
     let unhashedPass = req.body.password;
 
     bcrypt.hash(unhashedPass, saltRounds, (err, hash) => {
-        // do i need to `next()` this error?
-        if (err) console.error(err);
-
-        let userPasswordData = {
-            'passwordId': uuidv4(),
-            'password': hash,
-            // 'createdAt': moment().format("YYYY-MM-DD hh:mm:ss"),
-            'createdAt': null,
-            'replacedAt': null
-        }
-
-        let userPassword = new Password(userPasswordData.passwordId, userPasswordData.password, userPasswordData.createdAt, userPasswordData.replacedAt);
-
-        userPassword.insert().catch(err => next(err));
+        if (err) next(err);
 
         let userData = {
             'userId': uuidv4(),
@@ -34,12 +21,29 @@ router.post('/', (req, res, next) => {
             'userLastName': req.body.lastName,
             'userEmail': req.body.email,
             'userCreatedAt': moment().format("YYYY-MM-DD hh:mm:ss"),
-            'userPasswordId': userPasswordData.passwordId
         }
 
-        let user = new User(userData.userId, userData.userFirstName, userData.userLastName, userData.userEmail, userData.userCreatedAt, userData.userPasswordId);
+        let user = new User(userData.userId, userData.userFirstName, userData.userLastName, userData.userEmail, userData.userCreatedAt);
 
-        user.insert().catch(err => next(err));
+        user.insert().then(() => {
+            console.log(hash)
+            console.log("continued")
+
+            let userPasswordData = {
+                'userPasswordId': uuidv4(),
+                'userPasswordHash': hash,
+                'userId': userData.userId,
+                'createdAt': moment().format("YYYY-MM-DD hh:mm:ss"),
+                // 'createdAt': null,
+                'replacedAt': null
+            }
+
+            let userPassword = new Password(userPasswordData.userPasswordId, userPasswordData.userPasswordHash, userPasswordData.userId, userPasswordData.createdAt, userPasswordData.replacedAt);
+
+            userPassword.insert().catch(err => next(err))
+
+        }).catch(err => next(err))
+
 
     })
 

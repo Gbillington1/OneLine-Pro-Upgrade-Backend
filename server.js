@@ -61,9 +61,10 @@ app.use('/id', createStripeSession);
 
 // error handling middleware
 app.use((err, req, res, next) => {
-  console.log(err)
+  // console.log(err)
+
   // handle api error
-  if (err.error.type == "onelineApiError") {
+  if (err.error && err.error.type == "onelineApiError") {
     console.error(err);
     res.status(err.error.status).send(err.error.message);
   } else {
