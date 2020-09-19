@@ -26,15 +26,12 @@ router.post('/', (req, res, next) => {
         let user = new User(userData.userId, userData.userFirstName, userData.userLastName, userData.userEmail, userData.userCreatedAt);
 
         user.insert().then(() => {
-            console.log(hash)
-            console.log("continued")
 
             let userPasswordData = {
                 'userPasswordId': uuidv4(),
                 'userPasswordHash': hash,
                 'userId': userData.userId,
                 'createdAt': moment().format("YYYY-MM-DD hh:mm:ss"),
-                // 'createdAt': null,
                 'replacedAt': null
             }
 
@@ -42,12 +39,16 @@ router.post('/', (req, res, next) => {
 
             userPassword.insert().catch(err => next(err))
 
+        }).then(() => {
+
+            // user created with no errors
+            res.status(200).send('User created successfully');
+
         }).catch(err => next(err))
 
 
     })
 
-    res.status(200).send('Post req received');
 })
 
 module.exports = router;

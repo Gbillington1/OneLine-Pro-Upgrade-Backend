@@ -36,6 +36,7 @@ app.use((req, res, next) => {
     let emailValid = regexToValidateEmail.test(String(data.email).toLowerCase());
     let passwordValid = data.password.length >= 6;
 
+    // if email or password is invalid, throw an error
     if (!emailValid || !passwordValid) {
 
       next(new onelineApiError(701).output());
@@ -65,10 +66,15 @@ app.use((err, req, res, next) => {
 
   // handle api error
   if (err.error && err.error.type == "onelineApiError") {
+
     console.error(err);
     res.status(err.error.status).send(err.error.message);
+
   } else {
+    // handle non api error
+    console.error(err);
     res.status(400).send("Something went wrong");
+
   }
 
 });

@@ -1,4 +1,5 @@
 const pool = require('../models/db');
+const onelineApiError = require('./onelineApiError');
 
 class User {
     constructor(id, firstName, lastName, email, createdAt) {
@@ -13,12 +14,16 @@ class User {
 
         let user = this;
 
-        console.log(user);
-
         return new Promise((resolve, reject) => {
             pool.query('INSERT INTO users (user_id, user_first_name, user_last_name, user_email, created_at) VALUES (?, ?, ?, ?, ?)', [user.userId, user.userFirstName, user.userLastName, user.userEmail, user.userCreatedAt], (err, result, fields) => {
                 if (err) {
-                    reject(err);
+                    // if email already exists in DB
+                    if (err.message.includes("unique_email_constraint")) {
+                        reject(new onelineApiError(702).output());
+                    } else {
+                        reject(err);
+                    }
+
                 } else {
                     resolve();
                 }

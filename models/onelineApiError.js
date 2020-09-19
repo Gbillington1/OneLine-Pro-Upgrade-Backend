@@ -49,6 +49,11 @@ class onelineApiError extends Error {
                 httpCode = 412
                 break;
 
+            case 702: 
+                errMessage = "The email provided already exists in the database.";
+                httpCode = 412;
+                break;
+
             default:
                 errCode = 303
                 errMessage = "There was an error connecting to the server";
