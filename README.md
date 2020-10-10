@@ -1,26 +1,24 @@
 # OneLine-Pro-Upgrade-Backend
 Backend for the OneLine Pro Upgrade. This webapp will upgrade a user of OneLine to OneLine Pro.
 
-## API Anatomy
-
 ## Error Response
 
 To qualify an error, the response MUST have a `4xx`/`5xx`-level HTTP status code, and MUST include the `error` field which consists of an [error object](Errors.md#error-object). E.g.:
 
 ```
-GET -> /v1/users/me/
+POST -> api/v1/signup/
 ```
 --
 ```
-401 Unauthorized
+412 Precondition Failed
 ```
 ```
 {
     "error": {
-        "type": "oneline",
-        "message": "Your request could not be completed because it was not properly authenticated.",
-        "errCode": 300,
-        "httpCode": 401
+        "type": "onelineApiError",
+        "message": "The request parameters that have been received by the server are invalid.",
+        "errCode": 701,
+        "httpCode": 412
     }
 }
 ```
@@ -40,5 +38,6 @@ Code | Message | HTTP code | Description | Reference
 320 | The provided refresh token cannot be used to renew an access token. Client login should be attempted. | 403 | | [User Authentication](Authentication/OAuthAuthentication.md)
 700 | The requested operation is not permitted on this resource. | 412 | A precondition was not met for this request. | 
 701 | The request parameters that have been received by the server are invalid | 412 | A precondition was not met for this request. |
+702 | The email provided already exists in the database. | 412 | A precondition was not met for this request. |
 
 

@@ -6,10 +6,12 @@ const signUp = require('./routes/signup');
 const login = require('./routes/login');
 const payment = require('./routes/payment');
 const createStripeSession = require('./routes/createStripeSession');
+const forgotPassword = require('./routes/forgotPassword');
 
 // packages
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const jwt = require("jwt-simple");
 
 // models
 const onelineApiError = require("./models/onelineApiError");
@@ -25,7 +27,6 @@ app.use(bodyParser.json());
 
 // data validation
 app.use((req, res, next) => {
-
   // from signup route
   if (req.originalUrl === "/api/v1/signup") {
 
@@ -50,6 +51,9 @@ app.use((req, res, next) => {
 
 // user sign up route (before payment)
 app.use('/api/v1/signup', signUp);
+
+// forgot password route
+app.use('/api/v1/forgot', forgotPassword)
 
 // user login route
 // app.use('api/v1/login', login);
