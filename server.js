@@ -1,4 +1,3 @@
-require('dotenv').config();
 const app = require("express")();
 
 // routes
@@ -39,10 +38,9 @@ app.use((req, res, next) => {
 
     // if email or password is invalid, throw an error
     if (!emailValid || !passwordValid) {
-
       next(new onelineApiError(701).output());
+    } 
 
-    }
   } 
 
   next();

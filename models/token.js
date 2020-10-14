@@ -1,8 +1,7 @@
 const pool = require('../models/db');
 const onelineApiError = require('./onelineApiError');
 const crypto = require('crypto');
-const { resolve } = require('path');
-const { nextTick } = require('process');
+const moment = require("moment");
 
 class Token {
     constructor(user_email, date = null) {
@@ -19,73 +18,71 @@ class Token {
             pool.query('INSERT INTO password_tokens (user_email, token, token_expire_date) VALUES (?, ?, ?)', [token.user_email, token.token, token.token_expire_date], (err, result, fields) => {
                 if (err) {
                     
-                    // if token already exists in DB
+                    // if token with given email already exists in DB
                     if (err.message.includes("unique_token_email")) {
-                        // reset the token
-                        token.reset().then(() => {
+                        // update the token and expiredate
+                        token.update().then(() => {
+                            // update values in object
                             this.token = crypto.randomBytes(64).toString('base64');
+
                             // set token to expire in 1 hour
-                            this.token_expire_date = new Date();
-                            this.token_expire_date.setHours(this.token_expire_date.getHours() + 1);
+                            this.token_expire_date = moment().add(1, "hours").format("YYYY-MM-DD hh:mm:ss");
                             
                             resolve();
                             
                         }).catch(err => {
-                            
                             reject(err)
-                            
                         });
-                        
                     // other error
                     } else {
-                        
                         reject(err);
-                        
                     }
-
                 // no error
                 } else {
-
                     resolve();
                 }
-
             })
         })
     }
 
-    reset() {
+    update() {
         let token = this;
 
         // delete previous token 
         return new Promise((resolve, Reject) => {
-            pool.query('DELETE FROM password_tokens WHERE user_email = ?', [this.user_email], (err, result, fields) => {
+            pool.query('UPDATE password_tokens SET token = ?, token_expire_date = NOW() + INTERVAL 1 HOUR WHERE user_email = ?;', [token.token, token.user_email], (err, result, fields) => {
                 if (err) {
                     reject(err);
                 } else {
-                    pool.query('INSERT INTO password_tokens (user_email, token, token_expire_date) VALUES (?, ?, ?)', [token.user_email, token.token, token.token_expire_date], (err, result, fields) => {
-                        if (err) {
-    
-                            reject(err);
-        
-                        } else {
-                            resolve();
-                        }
-                    })
+                    resolve();
                 }
             })
         })
     }
 
-    delete() {
-
-        let token = this;
+    deleteExpired() {
 
         return new Promise((resolve, reject) => {
-            pool.query('DELETE FROM password_tokens WHERE user_email = ?', [this.user_email], (err, result, fields) => {
+            pool.query('DELETE FROM password_tokens WHERE token_expire_date < NOW()', (err, result, fields) => {
                 if (err) {
                     reject(err);
                 } else {
                     resolve();
+                }
+            })
+        })
+    }
+
+    retrieve() {
+
+        let token = this;
+
+        return new Promise((resolve, reject) => {
+            pool.query('SELECT * FROM password_tokens WHERE user_email = ?', [token.user_email], (err, result, fields) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
                 }
             })
         })

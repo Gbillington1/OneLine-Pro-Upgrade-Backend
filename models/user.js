@@ -32,7 +32,7 @@ class User {
         })
     }
 
-    update(firstName = this.userFirstName, lastName = this.userLastName, email = this.userEmail, hash = this.userPasswordHash) {
+    update(firstName, lastName, email, hash) {
 
         let user = this;
 

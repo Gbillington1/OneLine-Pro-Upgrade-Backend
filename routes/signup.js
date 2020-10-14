@@ -7,7 +7,7 @@ const User = require('../models/user');
 const onelineApiError = require("../models/onelineApiError");
 
 // post request for 'api/v1/signup'
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
     console.log("here");
     let unhashedPass = req.body.password;
 
