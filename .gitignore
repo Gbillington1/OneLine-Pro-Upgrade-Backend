@@ -5,6 +5,6 @@ jspm_packages
 # Serverless directories
 .serverless
 
-mariadb-data
+mariadb-data/**
 
 .env
