@@ -1,8 +1,10 @@
-# api key
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+mariadb-data
+
 .env
-
-# node moduels
-node_modules/**
-
-# db data
-mariadb-data/**

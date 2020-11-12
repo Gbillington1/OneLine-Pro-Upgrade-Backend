@@ -1,4 +1,5 @@
 const app = require("express")();
+const sls = require('serverless-http');
 
 // routes
 const signUp = require('./routes/signup');
@@ -75,14 +76,16 @@ app.use((err, req, res, next) => {
   } else {
     // handle non api error
     console.error(err);
-    res.status(400).send("Something went wrong");
+    res.status(400).send(err);
 
   }
 
 });
 
 // local
-app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+// app.listen(4242, () => console.log('Node server listening on port ' + 4242));
+
+module.exports.server = sls(app);
 
 // live
 // app.listen(process.env.PORT, () => console.log('Node server listening on port ' + process.env.PORT));

@@ -4,7 +4,7 @@ const router = asyncify(require('express').Router());
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_API_KEY);
 
 // recieve get request and return session id of the transaction 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [{
@@ -20,6 +20,8 @@ router.get('/', async (req, res) => {
         mode: 'payment',
         success_url: 'http://localhost:3000/thankyou?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: 'http://localhost:3000/upgrade',
+        customer_email: req.body.customerEmail
+
       });
       res.json({ session_id: session.id });
 });

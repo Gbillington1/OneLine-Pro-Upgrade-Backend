@@ -4,10 +4,10 @@ const mysql = require('mysql');
 // TODO: Figure out how to create a pool with the connection string
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: 'mariadb',
-    user: 'user',
-    password: 'test',
-    database: 'oneline-db'
+    host: '142.11.202.232',
+    user: 'ihpcevsl_OneLineUser',
+    password: 'mM95cuXTeV$t',
+    database: 'ihpcevsl_OneLine'
 });
 
 module.exports = pool;

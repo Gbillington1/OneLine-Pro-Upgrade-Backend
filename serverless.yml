@@ -1,0 +1,36 @@
+# serverless.yml 
+service: serverless-nodejs-app 
+
+custom: 
+  secrets: ${file(secrets.json)} # reference the secrets.json file
+
+provider: 
+  name: aws 
+  runtime: nodejs12.x
+  stage: dev 
+  region: us-east-1 
+
+functions: 
+  server: 
+    handler: server.server # reference the file and exported method
+    events: # events trigger lambda functions 
+      - http: # this is an API Gateway HTTP event trigger 
+          path: /api/v1/signup
+          method: ANY 
+          cors: true 
+      - http: # all routes get proxied to the Express router 
+          path: /{proxy+} 
+          method: ANY 
+          cors: true
+      - http:
+          path: /api/v1/forgot
+          method: ANY
+          cors: true
+      - http: 
+          path: /api/v1/payment-completed
+          method: ANY
+          cors: true
+      - http: 
+          path: /id
+          method: ANY
+          cors: true

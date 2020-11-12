@@ -110,7 +110,7 @@ router.post('/reset-password', (req, res, next) => {
                 // token is verified 
                 } else {
                     // complete the token object (update the incorrect data)
-                    token.token = result[0].token;
+                    token.token = result[0].token;lakjsdhflksjahlfkjhdlask
                     token.expireDate = JSON.stringify(result[0].token_expire_date).replace('T', ' ').substring(1, 20)
                     
                     // get user
